@@ -1,0 +1,7 @@
+const PREFIX='atlas:'+self.registration.scope+':', CACHE=PREFIX+'6170daf3a2690eef';
+const FILES=["index.html","assets/app.js","assets/atlas.svg","assets/catalog.js","assets/core.js","assets/icons.svg","assets/theme.css","az-900/index.html","az-900/guide.html","az-900/questions.json","sc-900/index.html","sc-900/guide.html","sc-900/questions.json","az-104/index.html","az-104/guide.html","az-104/questions.json","exchange-hybrid/index.html","exchange-hybrid/guide.html","exchange-hybrid/questions.json","sc-300/index.html","sc-300/guide.html","sc-300/questions.json","ms-102/index.html","ms-102/guide.html","ms-102/questions.json","ab-900/index.html","ab-900/guide.html","ab-900/questions.json","ab-650/index.html","ab-650/guide.html","ab-650/questions.json","ab-730/index.html","ab-730/guide.html","ab-730/questions.json","ai-901/index.html","ai-901/guide.html","ai-901/questions.json"];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES.map(f=>new Request(new URL(f,self.registration.scope),{cache:'reload'}))))));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith(PREFIX)&&k!==CACHE)await caches.delete(k);await self.clients.claim();})()));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||!e.request.url.startsWith(self.registration.scope))return;
+ const u=new URL(e.request.url);u.hash='';u.search='';if(u.pathname.endsWith('/'))u.pathname+='index.html';
+ e.respondWith(caches.open(CACHE).then(async c=>(await c.match(u.href))||fetch(e.request)));});
